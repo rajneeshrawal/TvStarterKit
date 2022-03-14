@@ -3,7 +3,9 @@ package com.rr.tvstarterkit.base
 import android.content.Context
 import androidx.fragment.app.Fragment
 import com.rr.tvstarterkit.base.listener.BackHandlerInterface
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 open class TvBaseFragment:Fragment() {
     protected var mActivity: TvBaseActivity? = null
     protected var mBackHandlerInterface: BackHandlerInterface? = null

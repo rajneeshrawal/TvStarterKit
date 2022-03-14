@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TvStarterKit</string>
+
+    <!-- Font Name -->
+    <string name="font_regular" translatable="false">montserrat_regular</string>
+    <string name="font_semibold" translatable="false">montserrat_semi_bold</string>
+    <string name="font_bold" translatable="false">montserrat_bold</string>
+    <string name="font_medium" translatable="false">montserrat_medium</string>
+
+</resources>

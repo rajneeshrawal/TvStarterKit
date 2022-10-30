@@ -1,35 +1,33 @@
-package com.rr.tvstarterkit.application;
+package com.rr.tvstarterkit.application
 
-import android.content.Context;
+import android.content.Context
+import com.rr.tvstarterkit.application.ContextProvider
 
-public class ContextProvider {
-
-    private Context applicationContext;
-
-    private static ContextProvider mContextProvider;
-
-    private ContextProvider() {
+class ContextProvider private constructor() {
+    private var applicationContext: Context? = null
+    fun provideContext(): Context? {
+        return applicationContext
     }
 
-    public static ContextProvider getContextProvider() {
-        if (mContextProvider == null) {
-            synchronized (ContextProvider.class) {
-                mContextProvider = new ContextProvider();
+    fun setApplicationContext(context: Context?) {
+        applicationContext = context
+    }
+
+    fun destroyContext() {
+        applicationContext = null
+    }
+
+    companion object {
+        private var mContextProvider: ContextProvider? = null
+        @JvmStatic
+        val contextProvider: ContextProvider?
+            get() {
+                if (mContextProvider == null) {
+                    synchronized(ContextProvider::class.java) {
+                        mContextProvider = ContextProvider()
+                    }
+                }
+                return mContextProvider
             }
-        }
-
-        return mContextProvider;
-    }
-
-    public Context provideContext() {
-        return applicationContext;
-    }
-
-    public void setApplicationContext(Context context) {
-        applicationContext = context;
-    }
-
-    public void destroyContext() {
-        applicationContext = null;
     }
 }

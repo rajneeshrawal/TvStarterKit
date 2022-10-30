@@ -10,13 +10,11 @@ import androidx.annotation.ColorInt
 import java.text.SimpleDateFormat
 import java.util.*
 
+private val TAG: String = TvUtils::class.java.simpleName
 
 class TvUtils {
 
     companion object {
-
-        val TAG: String = TvUtils::class.java.simpleName
-
 
         fun convertDate(dateInMilliseconds: Long): String {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")

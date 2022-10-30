@@ -1,6 +1,7 @@
 *.iml
 bin/
 /.idea/
+.idea/
 gen/
 .gradle
 /local.properties

@@ -8,6 +8,7 @@ class TvApplication:Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ContextProvider.getContextProvider().setApplicationContext(this)
+        ContextProvider.contextProvider?.setApplicationContext(this)
     }
+
 }

@@ -1,209 +1,169 @@
-package com.rr.tvstarterkit.data.preference;
+package com.rr.tvstarterkit.data.preference
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.text.TextUtils;
-import android.util.Log;
+import android.content.Context
+import android.content.SharedPreferences
+import android.text.TextUtils
+import android.util.Log
+import com.rr.tvstarterkit.application.ContextProvider.Companion.contextProvider
+import com.rr.tvstarterkit.data.preference.BooleanUtils.isTrue
 
+private val TAG = SharedPrefUtils::class.java.simpleName
 
-import com.rr.tvstarterkit.application.ContextProvider;
+class SharedPrefUtils {
+    companion object {
+        private var sharedPreferences: SharedPreferences? = null
+        private var context: Context? = null
+        private val preferences: SharedPreferences?
+            get() {
+                if (sharedPreferences == null) {
+                    if (context == null) context = contextProvider?.provideContext()
+                    sharedPreferences = context!!.getSharedPreferences(
+                        SharedPrefKeys.Shared_Pref_name,
+                        Context.MODE_PRIVATE
+                    )
+                }
+                return sharedPreferences
+            }
+        private val editor: SharedPreferences.Editor?
+            get() {
+                val sp = preferences
+                return sp?.edit()
+            }
 
-import java.util.HashSet;
-import java.util.Set;
-
-
-public class SharedPrefUtils {
-    public static final String TAG = SharedPrefUtils.class.getSimpleName();
-
-    private static SharedPreferences sharedPreferences;
-
-    private static Context context;
-
-    public SharedPrefUtils(Context context) {
-        this.context = context;
-    }
-
-
-    public static SharedPreferences getPreferences() {
-        if (sharedPreferences == null) {
-            if (context == null)
-                context = ContextProvider.getContextProvider().provideContext();
-            sharedPreferences = context.getSharedPreferences(SharedPrefKeys.Shared_Pref_name, Context.MODE_PRIVATE);
+        fun getPref(key: String?, defValue: String?): String? {
+            val sp = preferences
+            return if (sp == null || TextUtils.isEmpty(key)) defValue else sp.getString(
+                key,
+                defValue
+            )
         }
-        return sharedPreferences;
-    }
 
-    private static SharedPreferences.Editor getEditor() {
-        SharedPreferences sp = getPreferences();
-        return (sp != null) ? sp.edit() : null;
-    }
-
-    public static String getPref(String key, String defValue) {
-        SharedPreferences sp = getPreferences();
-        return (sp == null || TextUtils.isEmpty(key)) ? defValue : sp.getString(key, defValue);
-    }
-
-    public static int getPref(String key, int defValue) {
-        SharedPreferences sp = getPreferences();
-        return (sp == null) ? defValue : sp.getInt(key, defValue);
-    }
-
-
-    public static long getPref(String key, long defValue) {
-        SharedPreferences sp = getPreferences();
-        return (sp == null || TextUtils.isEmpty(key)) ? defValue : sp.getLong(key, defValue);
-    }
-
-    public static long getSettingPref(String key, long defValue) {
-        SharedPreferences sp = getPreferences();
-        return (sp == null || TextUtils.isEmpty(key)) ? defValue : sp.getLong(key, defValue);
-    }
-
-
-    public static boolean getPref(String key, boolean defValue) {
-        SharedPreferences sp = getPreferences();
-        if (sp == null || TextUtils.isEmpty(key)) {
-            return defValue;
+        fun getPref(key: String?, defValue: Int): Int {
+            val sp = preferences
+            return sp?.getInt(key, defValue) ?: defValue
         }
-        try {
-            return sp.getBoolean(key, defValue);
-        } catch (ClassCastException e) {
-            Log.e(TAG, e.getMessage(), e);
-            removePref(key);
-            return defValue;
+
+        fun getPref(key: String?, defValue: Long): Long {
+            val sp = preferences
+            return if (sp == null || TextUtils.isEmpty(key)) defValue else sp.getLong(key, defValue)
         }
-    }
 
-    public static Set<String> getPrefStringSet(String key) {
-        SharedPreferences sp = getPreferences();
-        if (sp == null)
-            return null;
-
-        return sp.getStringSet(key, new HashSet<String>());
-    }
-
-
-    public static boolean hasPref(String key) {
-        SharedPreferences sp = getPreferences();
-        if (sp == null)
-            return false;
-        return sp.contains(key);
-    }
-
-    public static void putPref(String key, String val) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return;
-
-        spe.putString(key, val);
-        spe.apply();
-        Log.d(TAG, "added string in SharedPref [ " + key + " : " + val + " ]");
-    }
-
-    public static void putPref(String key, Set<String> val) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null)
-            return;
-
-        spe.putStringSet(key, val);
-        spe.apply();
-        Log.d(TAG, "added Set<String> in SharedPref [ " + key + " : " + val + " ]");
-    }
-
-    public static void putPref(String key, boolean val) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return;
-
-        spe.putBoolean(key, val);
-        spe.apply();
-        Log.d(TAG, "added boolean in SharedPref [ " + key + " : " + val + " ]");
-    }
-
-    public static void putPref(String key, int val) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return;
-
-        spe.putInt(key, val);
-        spe.apply();
-        Log.d(TAG, "added int in SharedPref [ " + key + " : " + val + " ]");
-    }
-
-    public static void putPref(String key, long val) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return;
-
-        spe.putLong(key, val);
-        spe.apply();
-        Log.d(TAG, "added long in SharedPref [ " + key + " : " + val + " ]");
-    }
-
-    public static void removePref(String key) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return;
-
-        spe.remove(key);
-        spe.apply();
-        Log.d(TAG, "removed from SharedPref [ " + key + " ]");
-    }
-
-    public static void clear() {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null)
-            return;
-
-        spe.clear();
-        spe.apply();
-        Log.d(TAG, "SharedPref cleared!");
-    }
-
-    public static boolean isTrue(String key, String defValue) {
-        return BooleanUtils.isTrue(getPref(key, defValue));
-    }
-
-    public static boolean isFalse(String key, String defValue) {
-        return !isTrue(key, defValue);
-    }
-
-    public static boolean equals(String key, String defValue, String target) {
-        return TextUtils.equals(getPref(key, defValue), target);
-    }
-
-
-    /**
-     * Retrieves a set of Strings from {@link SharedPreferences} and returns as a List.
-     *
-     * @param key the key in shared preferences to access the string set.
-     * @return a list of <T> objects that were stored in shared preferences or an empty list if no
-     * objects exists.
-     */
-    public static Set<String> getList(String key) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return new HashSet<>();
-
-        Set<String> stringSet = getPrefStringSet(key);
-        if (stringSet.isEmpty()) {
-            // Favoring mutability of the list over Collections.emptyList().
-            return new HashSet<>();
+        fun getPref(key: String, defValue: Boolean): Boolean {
+            val sp = preferences
+            return if (sp == null || TextUtils.isEmpty(key)) {
+                defValue
+            } else try {
+                sp.getBoolean(key, defValue)
+            } catch (e: ClassCastException) {
+                Log.e(TAG, e.message, e)
+                removePref(key)
+                defValue
+            }
         }
-        return stringSet;
-    }
 
-    /**
-     * Saves a list of Strings into {@link SharedPreferences}.
-     *
-     * @param key the key in shared preferences which the string set will be stored.
-     */
-    public static void setList(Set<String> set, String key) {
-        SharedPreferences.Editor spe = getEditor();
-        if (spe == null || TextUtils.isEmpty(key))
-            return;
+        fun getPrefStringSet(key: String?): Set<String>? {
+            val sp = preferences ?: return null
+            return sp.getStringSet(key, HashSet())
+        }
 
-        spe.putStringSet(key, set);
-        spe.apply();
+        fun hasPref(key: String?): Boolean {
+            val sp = preferences ?: return false
+            return sp.contains(key)
+        }
+
+        fun putPref(key: String, `val`: String) {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return
+            spe.putString(key, `val`)
+            spe.apply()
+            Log.d(TAG, "added string in SharedPref [ $key : $`val` ]")
+        }
+
+        fun putPref(key: String, `val`: Set<String?>) {
+            val spe = editor ?: return
+            spe.putStringSet(key, `val`)
+            spe.apply()
+            Log.d(TAG, "added Set<String> in SharedPref [ $key : $`val` ]")
+        }
+
+        fun putPref(key: String, `val`: Boolean) {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return
+            spe.putBoolean(key, `val`)
+            spe.apply()
+            Log.d(TAG, "added boolean in SharedPref [ $key : $`val` ]")
+        }
+
+        fun putPref(key: String, `val`: Int) {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return
+            spe.putInt(key, `val`)
+            spe.apply()
+            Log.d(TAG, "added int in SharedPref [ $key : $`val` ]")
+        }
+
+        fun putPref(key: String, `val`: Long) {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return
+            spe.putLong(key, `val`)
+            spe.apply()
+            Log.d(TAG, "added long in SharedPref [ $key : $`val` ]")
+        }
+
+        fun removePref(key: String) {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return
+            spe.remove(key)
+            spe.apply()
+            Log.d(TAG, "removed from SharedPref [ $key ]")
+        }
+
+        fun clear() {
+            val spe = editor ?: return
+            spe.clear()
+            spe.apply()
+            Log.d(TAG, "SharedPref cleared!")
+        }
+
+        fun isTrue(key: String?, defValue: String?): Boolean {
+            return isTrue(getPref(key, defValue)!!)
+        }
+
+        fun isFalse(key: String?, defValue: String?): Boolean {
+            return !isTrue(key, defValue)
+        }
+
+        fun equals(key: String?, defValue: String?, target: String?): Boolean {
+            return TextUtils.equals(getPref(key, defValue), target)
+        }
+
+        /**
+         * Retrieves a set of Strings from [SharedPreferences] and returns as a List.
+         *
+         * @param key the key in shared preferences to access the string set.
+         * @return a list of <T> objects that were stored in shared preferences or an empty list if no
+         * objects exists.
+        </T> */
+        fun getList(key: String?): Set<String>? {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return HashSet()
+            val stringSet = getPrefStringSet(key)
+            return if (stringSet!!.isEmpty()) {
+                // Favoring mutability of the list over Collections.emptyList().
+                HashSet()
+            } else stringSet
+        }
+
+        /**
+         * Saves a list of Strings into [SharedPreferences].
+         *
+         * @param key the key in shared preferences which the string set will be stored.
+         */
+        fun setList(set: Set<String?>?, key: String?) {
+            val spe = editor
+            if (spe == null || TextUtils.isEmpty(key)) return
+            spe.putStringSet(key, set)
+            spe.apply()
+        }
     }
 }

@@ -35,6 +35,11 @@ public class GlideImageLoader {
                 .into(imageView);
     }
 
+    /**
+     * load image with RGB_564 decoder
+     * @param url
+     * @param imageView
+     */
     public void loadLowQualityImageFromUrl(String url, ImageView imageView) {
         if (imageView.getContext() != null && imageView.getContext().getApplicationContext() != null)
             Glide.with(imageView.getContext().getApplicationContext())

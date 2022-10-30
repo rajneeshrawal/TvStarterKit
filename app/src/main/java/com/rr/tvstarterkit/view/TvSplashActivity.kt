@@ -14,6 +14,7 @@ class TvSplashActivity : TvBaseActivity() {
     lateinit var binding: ActivitySplashBinding
     var homeViewModel: TvHomeViewModel? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)

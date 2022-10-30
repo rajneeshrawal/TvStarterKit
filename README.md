@@ -2,9 +2,9 @@
 Android TV App Starter Kit - Basic App Architecture
 this sample is written in Kotlin  which uses the following Architecture Components:
 
-ViewModel
-LiveData
-Data Binding
-Hilt Dependency injection
+1.ViewModel
+2.LiveData
+3.View Binding
+4.Hilt Dependency injection
 
 
